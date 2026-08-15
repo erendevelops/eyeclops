@@ -1,0 +1,80 @@
+{
+  "app": {
+    "name": "EyeClops"
+  },
+  "nav": {
+    "home": "Ana Sayfa",
+    "profiles": "Profiller",
+    "workingHours": "Çalışma Saatleri",
+    "settings": "Ayarlar",
+    "collapseSidebar": "Kenar çubuğunu daralt",
+    "expandSidebar": "Kenar çubuğunu genişlet"
+  },
+  "break": {
+    "default": "En az 6 metre uzaktaki bir şeye bakın",
+    "titleActive": "Mola zamanı",
+    "skip": "Atla",
+    "secondsLeft": "{{count}} saniye kaldı",
+    "secondsLeft_other": "{{count}} saniye kaldı"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "status": {
+      "activeProfile": "Aktif profil",
+      "paused": "Duraklatıldı",
+      "pause": "Duraklat",
+      "resume": "Devam et",
+      "offDuty": "Görev dışı",
+      "timerAriaLabel": "Mola geri sayım zamanlayıcısı",
+      "untilBreak": "molaya kadar"
+    },
+    "profiles": {
+      "title": "Mola programları",
+      "name": "Ad",
+      "intervalMin": "Aralık (dakika)",
+      "breakSec": "Mola süresi (saniye)",
+      "message": "Özel mesaj (isteğe bağlı)",
+      "messagePlaceholder": "Varsayılan mesajı kullanmak için boş bırakın",
+      "add": "Profil ekle",
+      "delete": "Sil",
+      "setActive": "Aktif yap",
+      "active": "Aktif"
+    },
+    "overlay": {
+      "title": "Mola ekranı",
+      "enabled": "Tam ekran mola ekranını göster",
+      "disabledHint": "Kapalıyken bunun yerine bir bildirim alırsınız ve mola yine de otomatik başlar"
+    },
+    "brightness": {
+      "title": "Parlaklık / renk sıcaklığı ipuçları",
+      "enabled": "Günün saatine göre ekran ipuçlarını göster",
+      "schedule": "Zamanlama",
+      "scheduleSunset": "Gün batımı civarında",
+      "openOsSettings": "Ekran ayarlarını aç"
+    },
+    "workingHours": {
+      "title": "Çalışma saatleri",
+      "enabled": "Yalnızca belirlenen saatlerde çalış",
+      "start": "Başlangıç",
+      "end": "Bitiş",
+      "days": {
+        "mon": "Pzt",
+        "tue": "Sal",
+        "wed": "Çar",
+        "thu": "Per",
+        "fri": "Cum",
+        "sat": "Cmt",
+        "sun": "Paz"
+      }
+    },
+    "startup": {
+      "title": "Başlangıç",
+      "launchAtStartup": "Oturum açtığımda EyeClops'u başlat"
+    },
+    "language": {
+      "title": "Dil",
+      "en": "İngilizce",
+      "tr": "Türkçe"
+    }
+  }
+}

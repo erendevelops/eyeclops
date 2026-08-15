@@ -1,0 +1,80 @@
+{
+  "app": {
+    "name": "EyeClops"
+  },
+  "nav": {
+    "home": "Home",
+    "profiles": "Profiles",
+    "workingHours": "Working Hours",
+    "settings": "Settings",
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar"
+  },
+  "break": {
+    "default": "Look at something at least 6 meters away",
+    "titleActive": "Break time",
+    "skip": "Skip",
+    "secondsLeft": "{{count}} second left",
+    "secondsLeft_other": "{{count}} seconds left"
+  },
+  "settings": {
+    "title": "Settings",
+    "status": {
+      "activeProfile": "Active profile",
+      "paused": "Paused",
+      "pause": "Pause",
+      "resume": "Resume",
+      "offDuty": "Off duty",
+      "timerAriaLabel": "Break countdown timer",
+      "untilBreak": "until break"
+    },
+    "profiles": {
+      "title": "Break schedules",
+      "name": "Name",
+      "intervalMin": "Interval (minutes)",
+      "breakSec": "Break duration (seconds)",
+      "message": "Custom message (optional)",
+      "messagePlaceholder": "Leave blank to use the default message",
+      "add": "Add profile",
+      "delete": "Delete",
+      "setActive": "Set active",
+      "active": "Active"
+    },
+    "overlay": {
+      "title": "Break overlay",
+      "enabled": "Show fullscreen break overlay",
+      "disabledHint": "When off, you'll get a notification instead, and the break still starts automatically"
+    },
+    "brightness": {
+      "title": "Brightness / color-temp tips",
+      "enabled": "Show time-of-day display tips",
+      "schedule": "Schedule",
+      "scheduleSunset": "Around sunset",
+      "openOsSettings": "Open display settings"
+    },
+    "workingHours": {
+      "title": "Working hours",
+      "enabled": "Only run during set hours",
+      "start": "Start",
+      "end": "End",
+      "days": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun"
+      }
+    },
+    "startup": {
+      "title": "Startup",
+      "launchAtStartup": "Launch EyeClops when you log in"
+    },
+    "language": {
+      "title": "Language",
+      "en": "English",
+      "tr": "Türkçe"
+    }
+  }
+}

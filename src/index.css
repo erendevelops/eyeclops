@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface-50: #121212;
+  --color-surface-100: #1a1a1a;
+  --color-surface-200: #232323;
+  --color-ink: #e9e4da;
+  --color-bronze: #b08d57;
+  --color-bronze-hover: #c9a768;
+  --color-oxide: #6e8b7a;
+  --color-ember: #b5502e;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  margin: 0;
+  @apply bg-surface-50 text-ink;
+}
+
+/* Thin themed scrollbar instead of the default OS one. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-bronze) transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-bronze);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+
+.overlay {
+  @apply relative h-screen w-screen flex flex-col items-center justify-center gap-6 text-center select-none bg-surface-50/95 text-ink;
+}
+
+.overlay-countdown {
+  @apply text-8xl font-bold text-bronze;
+}
+
+.overlay-message {
+  @apply max-w-[32rem] text-2xl leading-relaxed;
+}
+
+.overlay-actions {
+  @apply flex flex-row gap-4;
+}
+
+.overlay-actions button {
+  @apply rounded-lg bg-bronze px-5 py-2.5 text-base font-medium text-surface-50 transition-colors hover:bg-bronze-hover cursor-pointer;
+}
