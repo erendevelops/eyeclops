@@ -57,6 +57,15 @@ pub fn run() {
             let config_path = config_file_path(&app_data_dir);
             let config = Config::load(&config_path);
 
+            // The OS-level autostart registration can drift out of sync
+            // with the saved config (e.g. reinstalling over an older
+            // version wipes the Windows registry entry but not the config
+            // file) - re-assert it on every launch rather than only when
+            // the user flips the Settings toggle.
+            if let Err(err) = commands::sync_launch_at_startup(&app_handle, config.launch_at_startup) {
+                eprintln!("EyeClops: failed to sync launch-at-startup registration: {err}");
+            }
+
             app.manage(AppState {
                 config: Mutex::new(config),
                 scheduler: Mutex::new(SchedulerState::new()),

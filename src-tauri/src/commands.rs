@@ -162,19 +162,32 @@ pub fn snooze_break(app: AppHandle) {
 
 #[tauri::command]
 pub fn set_launch_at_startup(app: AppHandle, enabled: bool) -> Result<(), String> {
-    use tauri_plugin_autostart::ManagerExt;
-    let autostart = app.autolaunch();
-    let result = if enabled {
-        autostart.enable()
-    } else {
-        autostart.disable()
-    };
-    result.map_err(|e| e.to_string())?;
+    sync_launch_at_startup(&app, enabled).map_err(|e| e.to_string())?;
 
     let state = app.state::<AppState>();
     let mut config = state.config.lock().unwrap();
     config.launch_at_startup = enabled;
     config.save(&state.config_path).map_err(|e| e.to_string())
+}
+
+/// Asks the OS to (de)register EyeClops as a startup app, matching
+/// `enabled`. Exposed separately from the command so `main()` can also
+/// call it on every launch - the OS-level registration can drift out of
+/// sync with `config.launch_at_startup` (e.g. reinstalling over an old
+/// version wipes the registry entry but not the config file), so we
+/// re-assert it each time instead of only acting when the user flips the
+/// Settings toggle.
+pub fn sync_launch_at_startup(
+    app: &AppHandle,
+    enabled: bool,
+) -> Result<(), tauri_plugin_autostart::Error> {
+    use tauri_plugin_autostart::ManagerExt;
+    let autostart = app.autolaunch();
+    if enabled {
+        autostart.enable()
+    } else {
+        autostart.disable()
+    }
 }
 
 /// Deep-link into the OS's native display/night-light settings, where

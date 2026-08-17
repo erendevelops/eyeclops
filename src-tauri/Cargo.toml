@@ -1,6 +1,6 @@
 [package]
 name = "eyeclops"
-version = "0.1.4"
+version = "0.1.5"
 description = "EyeClops — a source-available desktop app for eye care, built around the 20-20-20 rule"
 authors = ["EyeClops contributors"]
 edition = "2021"
