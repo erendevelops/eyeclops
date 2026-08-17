@@ -188,13 +188,17 @@ fn spawn_scheduler_loop(app_handle: tauri::AppHandle) {
                 continue;
             };
 
+            // Either way, hold off on counting toward the *next* break
+            // until this one's break_sec has actually elapsed - whether
+            // that's the overlay's visible countdown or the notification's
+            // implied one. See the countdown_active block above.
+            *state.current_break.lock().unwrap() = Some(break_info.clone());
+            *state.break_countdown_secs.lock().unwrap() = Some(break_info.break_sec as u64);
+
             if overlay_enabled {
-                *state.current_break.lock().unwrap() = Some(break_info.clone());
                 overlay::show_break_overlays(&app_handle);
                 let _ = app_handle.emit("break:show", break_info);
             } else {
-                *state.current_break.lock().unwrap() = Some(break_info.clone());
-                *state.break_countdown_secs.lock().unwrap() = Some(break_info.break_sec as u64);
                 notify_break_without_overlay(&app_handle, &break_info);
             }
         }
