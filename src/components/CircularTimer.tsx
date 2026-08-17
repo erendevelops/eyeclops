@@ -7,6 +7,9 @@ interface CircularTimerProps {
   ariaLabel: string;
   /** Small caption shown under the countdown while running, e.g. "time left". */
   remainingCaption: string;
+  /** Label shown while a notification-only break countdown is active,
+   * e.g. "On break". */
+  onBreakLabel: string;
 }
 
 function formatRemaining(elapsedSecs: number, intervalSecs: number): string {
@@ -30,17 +33,23 @@ export default function CircularTimer({
   pausedLabel,
   ariaLabel,
   remainingCaption,
+  onBreakLabel,
 }: CircularTimerProps) {
   if (!status) {
     return null;
   }
 
-  const { elapsedSecs, intervalSecs, paused, onDuty } = status;
+  const { elapsedSecs, intervalSecs, paused, onDuty, breakRemainingSecs } = status;
+  const onBreak = breakRemainingSecs !== null;
   const progress = intervalSecs > 0 ? Math.min(1, elapsedSecs / intervalSecs) : 0;
-  const dashOffset = CIRCUMFERENCE * (1 - progress);
+  const dashOffset = onBreak ? 0 : CIRCUMFERENCE * (1 - progress);
 
-  const dimmed = paused || !onDuty;
+  const dimmed = !onBreak && (paused || !onDuty);
   const label = !onDuty ? offDutyLabel : paused ? pausedLabel : null;
+  const centerText = onBreak
+    ? String(breakRemainingSecs)
+    : (label ?? formatRemaining(elapsedSecs, intervalSecs));
+  const caption = onBreak ? onBreakLabel : !label ? remainingCaption : null;
 
   return (
     <div className="flex flex-col items-center gap-3">
@@ -72,12 +81,10 @@ export default function CircularTimer({
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-1">
-          <span className="text-2xl font-semibold text-ink">
-            {label ?? formatRemaining(elapsedSecs, intervalSecs)}
-          </span>
-          {!label && (
+          <span className="text-2xl font-semibold text-ink">{centerText}</span>
+          {caption && (
             <span className="text-xs uppercase tracking-wide text-ink/60">
-              {remainingCaption}
+              {caption}
             </span>
           )}
         </div>

@@ -79,20 +79,3 @@ export function SlidersIcon({ className }: IconProps) {
   );
 }
 
-export function ChevronIcon({
-  className,
-  direction = "left",
-}: IconProps & { direction?: "left" | "right" }) {
-  const points = direction === "left" ? "14 6 8 12 14 18" : "10 6 16 12 10 18";
-  return (
-    <svg viewBox="0 0 24 24" fill="none" className={className}>
-      <polyline
-        points={points}
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}

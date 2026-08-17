@@ -27,6 +27,10 @@ pub struct TimerStatus {
     pub interval_secs: u64,
     pub paused: bool,
     pub on_duty: bool,
+    /// Seconds left in an active notification-only break countdown, or
+    /// `None` when no such break is in progress. See
+    /// `AppState::break_countdown_secs`.
+    pub break_remaining_secs: Option<u64>,
 }
 
 #[tauri::command]
@@ -41,11 +45,13 @@ pub fn get_timer_status(app: AppHandle) -> TimerStatus {
         .unwrap_or(20 * 60);
     let scheduler = state.scheduler.lock().unwrap();
     let on_duty = *state.current_on_duty.lock().unwrap();
+    let break_remaining_secs = *state.break_countdown_secs.lock().unwrap();
     TimerStatus {
         elapsed_secs: scheduler.elapsed_secs,
         interval_secs,
         paused: scheduler.paused,
         on_duty,
+        break_remaining_secs,
     }
 }
 
@@ -134,6 +140,7 @@ pub fn get_active_break_info(app: AppHandle) -> Option<BreakInfo> {
 pub fn skip_break(app: AppHandle) {
     let state = app.state::<AppState>();
     *state.current_break.lock().unwrap() = None;
+    *state.break_countdown_secs.lock().unwrap() = None;
     overlay::close_break_overlays(&app);
 }
 
@@ -149,6 +156,7 @@ pub fn snooze_break(app: AppHandle) {
         .unwrap_or(20 * 60);
     state.scheduler.lock().unwrap().snooze(interval, 5 * 60);
     *state.current_break.lock().unwrap() = None;
+    *state.break_countdown_secs.lock().unwrap() = None;
     overlay::close_break_overlays(&app);
 }
 

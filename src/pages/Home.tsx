@@ -28,6 +28,7 @@ export default function Home() {
         pausedLabel={t("settings.status.paused")}
         ariaLabel={t("settings.status.timerAriaLabel")}
         remainingCaption={t("settings.status.untilBreak")}
+        onBreakLabel={t("settings.status.onBreak")}
       />
       <p className="text-sm text-ink/80">
         {t("settings.status.activeProfile")}:{" "}

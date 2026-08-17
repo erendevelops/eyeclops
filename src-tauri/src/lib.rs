@@ -2,6 +2,7 @@ mod background;
 mod brightness;
 mod commands;
 mod config;
+mod i18n;
 mod idle;
 mod overlay;
 mod scheduler;
@@ -26,6 +27,12 @@ pub struct AppState {
     pub config: Mutex<Config>,
     pub scheduler: Mutex<SchedulerState>,
     pub current_break: Mutex<Option<BreakInfo>>,
+    /// Seconds remaining in a break fired without the fullscreen overlay
+    /// (notification-only mode). While `Some`, the scheduler holds off on
+    /// counting toward the *next* break, so the 20-second countdown the
+    /// notification promised actually elapses before the next interval
+    /// starts - see `spawn_scheduler_loop`.
+    pub break_countdown_secs: Mutex<Option<u64>>,
     pub brightness_tips: BrightnessTipState,
     pub on_duty_tracker: OnDutyTracker,
     pub current_on_duty: Mutex<bool>,
@@ -55,6 +62,7 @@ pub fn run() {
                 config: Mutex::new(config),
                 scheduler: Mutex::new(SchedulerState::new()),
                 current_break: Mutex::new(None),
+                break_countdown_secs: Mutex::new(None),
                 brightness_tips: BrightnessTipState::new(),
                 on_duty_tracker: OnDutyTracker::new(),
                 current_on_duty: Mutex::new(true),
@@ -106,6 +114,30 @@ fn spawn_scheduler_loop(app_handle: tauri::AppHandle) {
             interval.tick().await;
 
             let state = app_handle.state::<AppState>();
+
+            // A notification-only break is currently counting down: hold
+            // off on the regular scheduler tick entirely so the next
+            // interval doesn't start accumulating until this 20-second
+            // countdown actually finishes.
+            let countdown_active = {
+                let mut countdown = state.break_countdown_secs.lock().unwrap();
+                match *countdown {
+                    Some(remaining) if remaining > 1 => {
+                        *countdown = Some(remaining - 1);
+                        true
+                    }
+                    Some(_) => {
+                        *countdown = None;
+                        *state.current_break.lock().unwrap() = None;
+                        false
+                    }
+                    None => false,
+                }
+            };
+            if countdown_active {
+                continue;
+            }
+
             let idle_secs = idle::idle_seconds();
 
             let (interval_secs, working_hours) = {
@@ -163,6 +195,8 @@ fn spawn_scheduler_loop(app_handle: tauri::AppHandle) {
                 overlay::show_break_overlays(&app_handle);
                 let _ = app_handle.emit("break:show", break_info);
             } else {
+                *state.current_break.lock().unwrap() = Some(break_info.clone());
+                *state.break_countdown_secs.lock().unwrap() = Some(break_info.break_sec as u64);
                 notify_break_without_overlay(&app_handle, &break_info);
             }
         }
@@ -174,10 +208,17 @@ fn spawn_scheduler_loop(app_handle: tauri::AppHandle) {
 /// window, and the 20-second break isn't otherwise tracked or enforced
 /// (nothing in the app blocks the user during it either way).
 fn notify_break_without_overlay(app_handle: &tauri::AppHandle, break_info: &BreakInfo) {
+    let language = app_handle
+        .state::<AppState>()
+        .config
+        .lock()
+        .unwrap()
+        .language
+        .clone();
     let body = break_info
         .custom_message
         .clone()
-        .unwrap_or_else(|| "Look at something at least 6 meters away for 20 seconds.".to_string());
+        .unwrap_or_else(|| i18n::break_default_message(&language).to_string());
     let _ = app_handle
         .notification()
         .builder()

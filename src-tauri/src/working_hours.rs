@@ -71,10 +71,11 @@ pub fn check_and_notify_transition(app: &AppHandle, working_hours_enabled: bool,
         return;
     }
 
+    let language = state.config.lock().unwrap().language.clone();
     let body = if on_duty {
-        "Back on duty."
+        crate::i18n::back_on_duty(&language)
     } else {
-        "EyeClops is now off duty."
+        crate::i18n::now_off_duty(&language)
     };
     let _ = app
         .notification()

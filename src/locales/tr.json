@@ -6,9 +6,7 @@
     "home": "Ana Sayfa",
     "profiles": "Profiller",
     "workingHours": "Çalışma Saatleri",
-    "settings": "Ayarlar",
-    "collapseSidebar": "Kenar çubuğunu daralt",
-    "expandSidebar": "Kenar çubuğunu genişlet"
+    "settings": "Ayarlar"
   },
   "break": {
     "default": "En az 6 metre uzaktaki bir şeye bakın",
@@ -26,7 +24,8 @@
       "resume": "Devam et",
       "offDuty": "Görev dışı",
       "timerAriaLabel": "Mola geri sayım zamanlayıcısı",
-      "untilBreak": "molaya kadar"
+      "untilBreak": "molaya kadar",
+      "onBreak": "Uzağa bakın"
     },
     "profiles": {
       "title": "Mola programları",

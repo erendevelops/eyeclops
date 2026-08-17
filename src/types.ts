@@ -28,6 +28,9 @@ export interface TimerStatus {
   intervalSecs: number;
   paused: boolean;
   onDuty: boolean;
+  /** Seconds left in an active notification-only break countdown, or
+   * `null` when no such break is in progress. */
+  breakRemainingSecs: number | null;
 }
 
 export interface Config {

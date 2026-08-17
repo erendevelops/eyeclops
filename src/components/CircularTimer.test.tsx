@@ -6,11 +6,18 @@ describe("CircularTimer", () => {
   it("shows the remaining time and caption when running", () => {
     render(
       <CircularTimer
-        status={{ elapsedSecs: 30, intervalSecs: 90, paused: false, onDuty: true }}
+        status={{
+          elapsedSecs: 30,
+          intervalSecs: 90,
+          paused: false,
+          onDuty: true,
+          breakRemainingSecs: null,
+        }}
         offDutyLabel="Off duty"
         pausedLabel="Paused"
         ariaLabel="Break countdown timer"
         remainingCaption="until break"
+        onBreakLabel="On break"
       />,
     );
     expect(screen.getByText("01:00")).toBeInTheDocument();
@@ -20,11 +27,18 @@ describe("CircularTimer", () => {
   it("shows the paused label when paused, without the remaining caption", () => {
     render(
       <CircularTimer
-        status={{ elapsedSecs: 30, intervalSecs: 90, paused: true, onDuty: true }}
+        status={{
+          elapsedSecs: 30,
+          intervalSecs: 90,
+          paused: true,
+          onDuty: true,
+          breakRemainingSecs: null,
+        }}
         offDutyLabel="Off duty"
         pausedLabel="Paused"
         ariaLabel="Break countdown timer"
         remainingCaption="until break"
+        onBreakLabel="On break"
       />,
     );
     expect(screen.getByText("Paused")).toBeInTheDocument();
@@ -34,11 +48,18 @@ describe("CircularTimer", () => {
   it("shows the off-duty label when not on duty, without the remaining caption", () => {
     render(
       <CircularTimer
-        status={{ elapsedSecs: 30, intervalSecs: 90, paused: false, onDuty: false }}
+        status={{
+          elapsedSecs: 30,
+          intervalSecs: 90,
+          paused: false,
+          onDuty: false,
+          breakRemainingSecs: null,
+        }}
         offDutyLabel="Off duty"
         pausedLabel="Paused"
         ariaLabel="Break countdown timer"
         remainingCaption="until break"
+        onBreakLabel="On break"
       />,
     );
     expect(screen.getByText("Off duty")).toBeInTheDocument();
@@ -53,6 +74,7 @@ describe("CircularTimer", () => {
         pausedLabel="Paused"
         ariaLabel="Break countdown timer"
         remainingCaption="until break"
+        onBreakLabel="On break"
       />,
     );
     expect(container).toBeInTheDocument();
@@ -61,11 +83,18 @@ describe("CircularTimer", () => {
   it("uses the given ariaLabel prop", () => {
     render(
       <CircularTimer
-        status={{ elapsedSecs: 0, intervalSecs: 90, paused: false, onDuty: true }}
+        status={{
+          elapsedSecs: 0,
+          intervalSecs: 90,
+          paused: false,
+          onDuty: true,
+          breakRemainingSecs: null,
+        }}
         offDutyLabel="Off duty"
         pausedLabel="Paused"
         ariaLabel="Mola geri sayım zamanlayıcısı"
         remainingCaption="molaya kadar"
+        onBreakLabel="Uzağa bakın"
       />,
     );
     expect(
@@ -77,11 +106,18 @@ describe("CircularTimer", () => {
   it("computes the arc offset proportional to elapsed progress", () => {
     const { container } = render(
       <CircularTimer
-        status={{ elapsedSecs: 45, intervalSecs: 90, paused: false, onDuty: true }}
+        status={{
+          elapsedSecs: 45,
+          intervalSecs: 90,
+          paused: false,
+          onDuty: true,
+          breakRemainingSecs: null,
+        }}
         offDutyLabel="Off duty"
         pausedLabel="Paused"
         ariaLabel="Break countdown timer"
         remainingCaption="until break"
+        onBreakLabel="On break"
       />,
     );
     const circles = container.querySelectorAll("circle");
@@ -92,5 +128,27 @@ describe("CircularTimer", () => {
       circumference / 2,
       5,
     );
+  });
+
+  it("shows the break countdown and onBreak label while a notification-only break is in progress, ignoring elapsed/paused/onDuty", () => {
+    render(
+      <CircularTimer
+        status={{
+          elapsedSecs: 0,
+          intervalSecs: 1200,
+          paused: false,
+          onDuty: true,
+          breakRemainingSecs: 14,
+        }}
+        offDutyLabel="Off duty"
+        pausedLabel="Paused"
+        ariaLabel="Break countdown timer"
+        remainingCaption="until break"
+        onBreakLabel="On break"
+      />,
+    );
+    expect(screen.getByText("14")).toBeInTheDocument();
+    expect(screen.getByText("On break")).toBeInTheDocument();
+    expect(screen.queryByText("until break")).not.toBeInTheDocument();
   });
 });

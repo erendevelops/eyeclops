@@ -34,7 +34,13 @@ vi.mock("../context/AppDataContext", () => ({
   useAppData: () => ({
     config: baseConfig,
     paused: false,
-    timerStatus: { elapsedSecs: 30, intervalSecs: 1200, paused: false, onDuty: true },
+    timerStatus: {
+      elapsedSecs: 30,
+      intervalSecs: 1200,
+      paused: false,
+      onDuty: true,
+      breakRemainingSecs: null,
+    },
     togglePause,
   }),
 }));

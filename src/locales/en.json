@@ -6,9 +6,7 @@
     "home": "Home",
     "profiles": "Profiles",
     "workingHours": "Working Hours",
-    "settings": "Settings",
-    "collapseSidebar": "Collapse sidebar",
-    "expandSidebar": "Expand sidebar"
+    "settings": "Settings"
   },
   "break": {
     "default": "Look at something at least 6 meters away",
@@ -26,7 +24,8 @@
       "resume": "Resume",
       "offDuty": "Off duty",
       "timerAriaLabel": "Break countdown timer",
-      "untilBreak": "until break"
+      "untilBreak": "until break",
+      "onBreak": "On break"
     },
     "profiles": {
       "title": "Break schedules",

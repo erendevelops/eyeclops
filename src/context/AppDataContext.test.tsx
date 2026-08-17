@@ -41,6 +41,7 @@ vi.mock("../api", () => ({
       intervalSecs: 1200,
       paused: false,
       onDuty: true,
+      breakRemainingSecs: null,
     })),
   },
 }));

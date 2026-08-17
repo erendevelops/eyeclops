@@ -87,7 +87,7 @@ pub fn check_and_notify(app: &AppHandle) {
             .notification()
             .builder()
             .title("EyeClops")
-            .body("It's evening - consider enabling Night Light / a blue-light filter.")
+            .body(crate::i18n::brightness_tip(&config.language))
             .show();
     }
 }
