@@ -57,7 +57,11 @@ jobs:
 
       - uses: tauri-apps/tauri-action@v0
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Uses a dedicated PAT (Contents: Read and write, scoped to this
+          # repo) instead of the default GITHUB_TOKEN - the default token's
+          # write access depends on the repo's "Workflow permissions"
+          # setting, which proved unreliable for release creation.
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
           tagName: v__VERSION__
           releaseName: "EyeClops v__VERSION__"
