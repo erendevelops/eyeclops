@@ -18,14 +18,12 @@ impl SchedulerState {
     /// Advance the scheduler by one second. Returns `true` if a break is
     /// due this tick (and resets the elapsed counter).
     ///
-    /// `idle_secs` is how long the user has been away from keyboard/mouse;
-    /// while idle for more than a few seconds, elapsed time doesn't
-    /// accumulate, so breaks don't fire while nobody is at the screen.
     /// `on_duty` is whether the current time falls inside the configured
-    /// working hours (always `true` when working hours are disabled).
-    pub fn tick(&mut self, idle_secs: u64, interval_secs: u64, on_duty: bool) -> bool {
-        const IDLE_THRESHOLD_SECS: u64 = 60;
-        if self.paused || !on_duty || idle_secs >= IDLE_THRESHOLD_SECS || interval_secs == 0 {
+    /// working hours (always `true` when working hours are disabled). The
+    /// timer keeps running regardless of keyboard/mouse activity - it does
+    /// not pause just because the user has stepped away.
+    pub fn tick(&mut self, interval_secs: u64, on_duty: bool) -> bool {
+        if self.paused || !on_duty || interval_secs == 0 {
             return false;
         }
         self.elapsed_secs += 1;
@@ -64,9 +62,9 @@ mod tests {
     fn fires_exactly_after_interval_ticks() {
         let mut s = SchedulerState::new();
         for _ in 0..19 {
-            assert!(!s.tick(0, 20, true));
+            assert!(!s.tick(20, true));
         }
-        assert!(s.tick(0, 20, true));
+        assert!(s.tick(20, true));
         assert_eq!(s.elapsed_secs, 0);
     }
 
@@ -75,34 +73,28 @@ mod tests {
         let mut s = SchedulerState::new();
         s.paused = true;
         for _ in 0..100 {
-            assert!(!s.tick(0, 20, true));
+            assert!(!s.tick(20, true));
         }
         assert_eq!(s.elapsed_secs, 0);
     }
 
     #[test]
-    fn idle_pauses_accumulation() {
-        let mut s = SchedulerState::new();
-        for _ in 0..100 {
-            assert!(!s.tick(120, 20, true));
-        }
-        assert_eq!(s.elapsed_secs, 0);
-    }
-
-    #[test]
-    fn brief_idle_below_threshold_still_accumulates() {
+    fn keeps_accumulating_regardless_of_afk_time() {
+        // The timer must not pause just because the user has stepped away
+        // from the keyboard/mouse - it keeps counting toward the next
+        // break exactly the same as if they were active.
         let mut s = SchedulerState::new();
         for _ in 0..19 {
-            assert!(!s.tick(5, 20, true));
+            assert!(!s.tick(20, true));
         }
-        assert!(s.tick(5, 20, true));
+        assert!(s.tick(20, true));
     }
 
     #[test]
     fn snooze_delays_next_fire() {
         let mut s = SchedulerState::new();
         for _ in 0..15 {
-            s.tick(0, 20, true);
+            s.tick(20, true);
         }
         assert_eq!(s.elapsed_secs, 15);
         s.snooze(20, 300); // snooze longer than the interval clamps to 0 elapsed
@@ -113,7 +105,7 @@ mod tests {
     #[test]
     fn reset_zeroes_elapsed() {
         let mut s = SchedulerState::new();
-        s.tick(0, 20, true);
+        s.tick(20, true);
         s.reset();
         assert_eq!(s.elapsed_secs, 0);
     }
@@ -122,7 +114,7 @@ mod tests {
     fn off_duty_never_fires() {
         let mut s = SchedulerState::new();
         for _ in 0..100 {
-            assert!(!s.tick(0, 20, false));
+            assert!(!s.tick(20, false));
         }
         assert_eq!(s.elapsed_secs, 0);
     }
@@ -131,12 +123,12 @@ mod tests {
     fn resumes_accumulating_once_back_on_duty() {
         let mut s = SchedulerState::new();
         for _ in 0..10 {
-            s.tick(0, 20, false);
+            s.tick(20, false);
         }
         assert_eq!(s.elapsed_secs, 0);
         for _ in 0..19 {
-            assert!(!s.tick(0, 20, true));
+            assert!(!s.tick(20, true));
         }
-        assert!(s.tick(0, 20, true));
+        assert!(s.tick(20, true));
     }
 }

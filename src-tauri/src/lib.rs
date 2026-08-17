@@ -3,7 +3,6 @@ mod brightness;
 mod commands;
 mod config;
 mod i18n;
-mod idle;
 mod overlay;
 mod scheduler;
 mod tray;
@@ -106,7 +105,8 @@ pub fn run() {
 }
 
 /// Ticks once a second: advances the active profile's break timer (paused
-/// while idle/paused/off-duty), and fires the break overlay when it elapses.
+/// while paused/off-duty - it keeps running regardless of AFK time), and
+/// fires the break overlay when it elapses.
 fn spawn_scheduler_loop(app_handle: tauri::AppHandle) {
     tauri::async_runtime::spawn(async move {
         let mut interval = tokio::time::interval(Duration::from_secs(1));
@@ -138,8 +138,6 @@ fn spawn_scheduler_loop(app_handle: tauri::AppHandle) {
                 continue;
             }
 
-            let idle_secs = idle::idle_seconds();
-
             let (interval_secs, working_hours) = {
                 let config = state.config.lock().unwrap();
                 (
@@ -170,7 +168,7 @@ fn spawn_scheduler_loop(app_handle: tauri::AppHandle) {
                 .scheduler
                 .lock()
                 .unwrap()
-                .tick(idle_secs, interval_secs, on_duty);
+                .tick(interval_secs, on_duty);
             if !fired {
                 continue;
             }
